@@ -1,0 +1,14 @@
+.joblib_cache
+**/checkpoints/**
+**/data/**
+*.pyc
+**/__pycache__
+*.npy
+*.ply
+*.obj
+*unused_code.py
+*point_selector.py
+*log*
+.idea
+*.egg-info
+.coverage

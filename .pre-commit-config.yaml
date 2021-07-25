@@ -1,0 +1,14 @@
+repos:
+-   repo: https://github.com/ambv/black
+    rev: 20.8b1
+    hooks:
+    - id: black
+-   repo: https://gitlab.com/pycqa/flake8
+    rev: 3.7.9
+    hooks:
+    - id: flake8
+-   repo: https://github.com/PyCQA/isort
+    rev: 5.7.0
+    hooks:
+    - id: isort
+      args: ["--profile", "black"]

@@ -1,0 +1,18 @@
+image: continuumio/miniconda3:latest
+
+before_script:
+  # Setup of the conda virtual environment
+  - export PIP_CACHE_DIR="/opt/cache/pip"
+  - conda env create -f environment.yml
+  - source activate meshcorr
+
+tests :
+  stage: test
+  script:
+    - pip install -e .
+    - pip install pytest pytest-cov
+    - pytest --cov=meshcorr/ tests/
+    - coverage xml
+  artifacts:
+    reports:
+      cobertura: coverage.xml

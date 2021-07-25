@@ -1,0 +1,16 @@
+name: meshcorr
+channels:
+  - conda-forge
+  - pytorch
+dependencies:
+  - python=3.8
+  - tensorflow
+  - igl
+  - scipy
+  - pip
+  - pip:
+      - vedo
+      - joblib
+      - ortools
+      - matplotlib
+      - scikit-image
