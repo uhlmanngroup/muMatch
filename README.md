@@ -46,18 +46,7 @@ pre-commit install
 
 ## TODO-list
 
-### Geodesic Matching
-
-1. Geodesic optimiser - start at low time resolution.
-
-
 ### Improvements
-
-1. Collective optimisation - update
-3. Re-add curvature into optimisation??
-4. Compare Deep Learning vs C optimisation.
-5. Implement SHOT decriptor.
 
 ### General
 
-1. Benchmark on Teeth, TOSCA and FAUST
