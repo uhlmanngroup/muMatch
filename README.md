@@ -43,12 +43,12 @@ pre-commit install
 
 ### List of tunebale parameters
 
-1. Input mesh size: target_size in preprocess.py. Default value is ???.
-2. Number of WKS, HKS and Gaussian signature functions: num_wks, num_hks, and ????? in preprocess.py. Default values are ???, ???, and ???, respectively.
-3. Dimension of the functional space: k in match.py. Default value is 100.
+1. Input mesh size: target_size in preprocess.py. Default value is **???**.
+2. Number of WKS, HKS and Gaussian signature functions: num_wks, num_hks, and **???** in preprocess.py. Default values are **???**, **???**, and **???**, respectively.
+3. Dimension of the functional space: k in **??.py**. Default value is 100.
 
 ### How to cite
 
 If you use µMatch, please cite us as follows:
 
-J. Klatzow, G. Dalmasso, N. Martinez-Abadias, J. Sharpe, and V. Uhlmann, "μMatch: 3D shape correspondence for microscopy data", 2021.
+> J. Klatzow, G. Dalmasso, N. Martinez-Abadias, J. Sharpe, and V. Uhlmann, "μMatch: 3D shape correspondence for microscopy data", 2021.
