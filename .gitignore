@@ -1,3 +1,6 @@
 **/.DS_Store
-!**/__pycache__/*
-!**/.joblib_cache/*
+**/__pycache__/*
+**/.joblib_cache/*
+**/.joblib_cache
+**/__pycache__
+
