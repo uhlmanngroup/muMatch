@@ -17,14 +17,14 @@ import pymeshfix
 from tqdm import tqdm
 
 ## Local Imports ##
-sys.path.insert(1, "../tools")
-sys.path.insert(1, "../meshcorr/functional_maps")
+cur_dir = os.path.dirname(__file__)
+sys.path.insert(1, cur_dir)
+sys.path.insert(1, os.path.join(cur_dir, "..", "tools"))
 
 import geometric_utilities as util
 import feature_descriptors as fd
 from   mesh_class import Mesh, mesh_loader
 
-clean = False
 
 def clean_mesh(mesh):
     v,f = mesh.points(), np.asarray(mesh.faces())
@@ -33,14 +33,9 @@ def clean_mesh(mesh):
     return vp.Mesh([meshfix.v, meshfix.f])
 
 
-def batch_preprocess(dir_in, dir_out, type, target_size = 3000, num_eigenfunctions = 100, num_wks=100, num_hks=0):
+def batch_preprocess(dir_in, dir_out, config):
 
-    fconfig = os.path.join(dir_out, 'config' + '.json')
-    config  =  {'N': target_size, 'num_eigenfunctions': num_eigenfunctions, 'type': type, 'num_hks': num_hks, 'num_wks': num_wks, 'num_gaussian': 18}
-    with open(fconfig, 'w') as json_file:
-        json.dump(config, json_file)
-
-    loader = mesh_loader(dir_out)
+    loader = mesh_loader(dir_out, k=config["functional_dimension"], type="")
     dirs = {fn: os.path.join(dir_out, fn) for fn in ["meshes", "geodesic_matrices", "eigen", "signatures"]}
 
     for k in dirs:
@@ -54,6 +49,7 @@ def batch_preprocess(dir_in, dir_out, type, target_size = 3000, num_eigenfunctio
     print(60*"-" + "\n")
 
     raw_files = os.listdir(dir_in)
+    target_size = config["number_vertices"]
 
     for f in tqdm(raw_files):
         fin = os.path.join(dir_in, f)
@@ -63,7 +59,7 @@ def batch_preprocess(dir_in, dir_out, type, target_size = 3000, num_eigenfunctio
         if os.path.exists(fout):
             continue
         mesh = vp.load(fin)
-        if clean:
+        if config["clean"]:
             mesh = clean_mesh(mesh)
         while (mesh.N() < target_size):
             mesh.subdivide(N=1, method=0)
@@ -107,7 +103,8 @@ def batch_preprocess(dir_in, dir_out, type, target_size = 3000, num_eigenfunctio
 
     emin = float(min(minima))
     emax = float(max(maxima))
-    descriptor =  fd.descriptor_class(emin, emax, num_wks=num_wks, num_hks=num_hks)
+    num_hks, num_wks, num_gaussian = [config[key] for key in ["number_hks", "number_wks", "number_gaussian"]]
+    descriptor =  fd.descriptor_class(emin, emax, num_wks=num_wks, num_hks=num_hks, num_gaussian=num_gaussian)
 
     print("\n" + 60*"-")
     print("Calculating signature functions")
@@ -128,7 +125,4 @@ def batch_preprocess(dir_in, dir_out, type, target_size = 3000, num_eigenfunctio
     return
 
 if __name__ == "__main__":
-    dir_in  = "../example_data/raw"
-    dir_out = "../example_data/processed_data"
-
-    batch_preprocess(dir_in, dir_out, type="neus", target_size = 2000, num_wks=100, num_hks=0)
+    pass

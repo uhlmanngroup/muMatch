@@ -13,17 +13,20 @@ import igl
 import vedo as vp
 import matplotlib.pyplot as plt
 
+## Memory 
+from joblib import Memory, Parallel, delayed
+# To have a cache for computations which are taking time to complete
+memory = Memory(location=".joblib_cache", verbose=0)
+
 ## Local Imports ##
-sys.path.insert(1, "../tools")
+cur_dir = os.path.dirname(__file__)
+sys.path.insert(1, os.path.join(cur_dir, "..", "tools"))
 
 import geometric_utilities as util
 from mesh_class import Mesh, mesh_loader
 
 from itertools import tee
-
-from joblib import Memory, Parallel, delayed
-# To have a cache for computations which are taking time to complete
-memory = Memory(location=".joblib_cache", verbose=0)
+import networkx as nx
 
 ''' ======================================================================================================= '''
     #### ---------------------------------------------------------------------------------------------- ###
@@ -31,10 +34,26 @@ memory = Memory(location=".joblib_cache", verbose=0)
 
 
 def pairwise(iterable):
-    "s -> (s0,s1), (s2,s3), (s4, s5), ..."
+    "s -> (s0,s1), (s1,s2), (s2, s3), ..."
     a, b = tee(iterable)
     next(b, None)
     return zip(a, b)
+
+
+def split(fn):
+    f,_ = os.path.splitext(fn)
+    f1,f2 = f.split("_")
+    return [f1,f2]
+
+
+def readResults(input_dir, fn1, fn2):
+    fin = os.path.join(input_dir, fn1 + "_" + fn2 + ".npy")
+    if os.path.isfile(fin):
+        x,y = np.load(fin)
+    else:
+        fin = os.path.join(input_dir, fn2 + "_" + fn1 + ".npy")
+        y,x = np.load(fin)
+    return x,y
 
 
 def rbf(x):
@@ -58,15 +77,6 @@ def deformation_transform(src, dst, *args):
     R = util.orthogonalProcrustes(dst.v - cd, src.v - cs)
     for x in args:
         x.shift(-cs).rotate(R).shift(cd)
-    return
-
-
-def deformation_transform_with_tps(src, dst, x):
-    src,dst = (m.copy() for m in (src,dst))
-    deformation_transform(src, dst, src, x)
-    j = util.metric_sampling(src.g, 50)
-    dx = thin_plate_spline(src.v[j], dst.v[j], x.v)
-    x.shift(dx)
     return
 
 
@@ -102,30 +112,66 @@ def icp_alignement(point_clouds, iterations = 5, idx = None):
         aligned = Parallel(n_jobs=-1)(delayed(func)(pts) for pts in aligned)
         average = np.mean(aligned, axis=0)
     return idx, np.stack(aligned, axis = 0)
+    
+    
+def build_graph_from_directory(dir_in):
+    files=[]
+    for f in os.listdir(dir_in):
+        name, ext = os.path.splitext(f)
+        if ext == '.npy':
+            files.append(f)
 
+    pairs = [split(fn) for fn in files]
+    names = list(set([item for sublist in pairs for item in sublist]))
+    nodes = [n for n in range(len(names))]
+    _map_ = {name:n for n,name in zip(nodes, names)}
+    
+    g = nx.Graph()
+    g.add_nodes_from(nodes)
+
+    for f1,f2 in pairs:
+        g.add_edge(_map_[f1], _map_[f2])
+    
+    return names, g
+        
+    
+def process_directory(data_dir, match_dir, display=False):
+    loader = mesh_loader(data_dir)
+    names, G = build_graph_from_directory(match_dir)
+    connected = list(max(nx.connected_components(G), key=len))
+    
+    graph_centrality = nx.degree_centrality(G)
+    connected_centrality = [graph_centrality[n] for n in connected]
+    target_idx = max(range(len(connected_centrality)), key=connected_centrality.__getitem__)
+
+    meshes = [loader(names[n], normalise=True) for n in connected]
+    aligned = []
+    
+    for source_idx in connected:
+        path = nx.shortest_path(G, source=source_idx, target=target_idx)
+        x = meshes[source_idx].copy()
+        for a,b in pairwise(path):
+            i,j = readResults(match_dir, names[a], names[b])
+            deformation_transform(meshes[a][i], meshes[b][j], x)
+        aligned.append(x.v)
+        
+    template_idx, point_clouds = icp_alignement(aligned, iterations = 2)
+    
+    if display:
+        f = meshes[template_idx].f
+        v = np.mean(point_clouds, axis=0)
+        deviation = np.linalg.norm(np.std(point_clouds, axis=0), axis=-1)
+        scalar = meshes[template_idx].filter(deviation, k=-1)
+
+        average = meshes[template_idx].copy()
+        average.v = v
+        average.display(scalar=scalar)
+
+    return names, point_clouds
 
 
 if __name__ == "__main__":
-    dir_in = "../example_data"
+    pass
+    
 
-    loader = mesh_loader(os.path.join(dir_in, "processed_data"))
 
-    src = loader("1")
-    dst = loader("2")
-    i,j = np.load(os.path.join(dir_in, "match_results", "1_2.npy"))
-
-    deformation_transform(src[i], dst[j], src)
-    _,aligned = icp_alignement([m.v for m in [src,dst]], iterations = 2, idx = 0)
-
-    mu = np.mean(aligned, axis=0)
-    dev = np.linalg.norm(np.std(aligned,axis=0), axis=-1)
-
-    average = src.copy()
-    average.v = mu
-    dev = average.filter(dev, k=-1)
-    average.display(scalar=dev)
-
-    classes = np.asarray(2*["tooth"])
-
-    fout = os.path.join(dir_in, "aligned_point_clouds", "example.npz")
-    np.savez(fout, point_clouds = aligned, classes = classes )

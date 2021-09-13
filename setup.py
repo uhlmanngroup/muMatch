@@ -2,19 +2,19 @@
 
 from setuptools import setup
 
-VERSION = "0.1.0"
-AUTHOR = "James Klatzow"
-AUTHOR_EMAIL = "jklatzow@ebi.ac.uk"
+VERSION = "1.0"
+AUTHOR = "James Klatzow, Virginie Uhlmann"
+AUTHOR_EMAIL = "uhlmann@ebi.ac.uk"
 
 
 setup(
-    name="meshcorr",
+    name="microMatch",
     version=VERSION,
-    description="Library to include correspondence techniques for a variety of mesh types.",
+    description="3D shape correspondence for microscopy data",
     author=AUTHOR,
     author_email=AUTHOR_EMAIL,
     packages=[
-        "meshcorr",
+        "mumatch",
     ],
     classifiers=[
         "Intended Audience :: Science/Research",
@@ -34,6 +34,6 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: " "Implementation :: CPython",
     ],
-    url="https://gitlab.ebi.ac.uk/jklatzow/mesh_correspondence_library",
+    url="https://github.com/uhlmanngroup/muMatch",
     python_requires=">=3.6",
 )

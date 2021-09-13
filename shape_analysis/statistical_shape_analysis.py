@@ -11,7 +11,8 @@ import math
 import matplotlib.pyplot as plt
 
 ## Local Imports ##
-sys.path.insert(1, "../tools")
+cur_dir = os.path.dirname(__file__)
+sys.path.insert(1, os.path.join(cur_dir, "..", "tools"))
 
 import geometric_utilities as util
 from sklearn.decomposition import PCA
@@ -49,7 +50,7 @@ def collection_deviation(point_clouds, iterations = 15):
 
 
 def clustering_analysis(classes, deviations, variant):
-
+    classes = np.asarray(classes)
     unique = np.unique(classes)
     cmap = ['g', 'r', 'b', 'p', 'c', 'k', 'o'] ## fix
 
@@ -70,12 +71,4 @@ def clustering_analysis(classes, deviations, variant):
 
 
 if __name__ == "__main__":
-    dir_in = "../example_data"
-    fout = os.path.join(dir_in, "aligned_point_clouds", "example.npz")
-    data = np.load(fout)
-
-    classes = data["classes"]
-    point_clouds = data["point_clouds"]
-
-    deviations = collection_deviation(point_clouds, iterations = 10)
-    clustering_analysis(classes, deviations, variant = "teeth")
+    pass

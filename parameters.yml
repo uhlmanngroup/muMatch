@@ -1,0 +1,16 @@
+---
+preprocessing:
+    number_vertices: 1800 # default range is 1000 - 5000.
+    functional_dimension: 100 # default range is 75 - 150
+    clean: false # manifold cleaning of the mesh
+    number_hks: 0
+    number_wks: 100
+    number_gaussian: 18
+
+correspondence:
+    initial_solve_dimension: 8 # solve dimension prior to zoomout refinement
+    symmetry_optimisation: true # set to true if the mesh has an intrinsic symmetry
+    product_manifold_filter: # the following quantities are relative to the average geodesic distance
+        sigma: 0.75
+        gamma: 0.5 # sigma is reduced by this factor at each iteration
+        iterations: 2

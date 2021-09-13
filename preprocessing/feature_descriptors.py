@@ -33,9 +33,9 @@ def generate_sequence(xmin, xmax, nsamples, sequence_type = 'log_linear'):
     return res
 
 
-def gaussian_descriptor(mesh):
+def gaussian_descriptor(mesh, num):
     k = util.gaussianCurvature(mesh.v, mesh.f)
-    mus = [10.0**(-t) for t in np.linspace(1,9, num=18, endpoint=True)]
+    mus = [10.0**(-t) for t in np.linspace(1,9, num=num, endpoint=True)]
     ks = [util.laplacianSmoothing(mesh.l, mesh.mass, k, mu=mu) for mu in mus]
     return np.stack(ks, axis=-1)
 
@@ -65,16 +65,17 @@ def heat_kernel_signature(evecs, evals, T):
 
 
 class descriptor_class:
-    def __init__(self, emin, emax, num_wks, num_hks):
+    def __init__(self, emin, emax, num_wks, num_hks, num_gaussian):
         eps,sigma  =  generate_sequence(emin, emax, num_wks, sequence_type = 'log_linear')
         T  =  generate_sequence(emin, emax, num_hks, sequence_type = 'log_sampled')
         self.T  =  T
         self.eps  =  eps
         self.sigma =  sigma
+        self.num_gaussian = num_gaussian
 
     def __call__(self, mesh):
         evals,evecs = mesh.eigen
-        kap = gaussian_descriptor(mesh)
+        kap = gaussian_descriptor(mesh, self.num_gaussian)
         wks = wave_kernel_signature(evecs[:,1:], evals[1:], self.eps, self.sigma)
         hks = heat_kernel_signature(evecs[:,1:], evals[1:], self.T)
         sigs = np.concatenate([wks, hks, kap], axis = -1)

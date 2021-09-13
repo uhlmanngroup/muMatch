@@ -178,6 +178,7 @@ class Mesh:
 
     @eigen.setter
     def eigen(self, eigen):
+        self.__k = eigen[0].size
         self.__eigen = eigen
 
     @property
@@ -325,6 +326,7 @@ class Mesh:
             sph = vp.shapes.Spheres(self.v[i], r = .01)
             actors.append(sph)
 
+
         fig = None
         if not "fig" in kwargs:
             fig = vp.plotter.Plotter()
@@ -369,23 +371,24 @@ def readConfig(dir):
 
 class mesh_loader:
 
-    def __init__(self, dir):
-        self.cnf = readConfig(dir)
-        self.dir = dir
+    def __init__(self, dir, k=-1, type=""):
+        self.__dir = dir
+        self.__k = k
+        self.__type = type
 
     def __call__(self, fn, normalise = False):
-        fmsh = os.path.join(self.dir, 'meshes', fn + '.ply')
+        fmsh = os.path.join(self.__dir, 'meshes', fn + '.ply')
         v,f = util.readMesh(fmsh, normalise = False)
-        fgeo = os.path.join(self.dir, 'geodesic_matrices', fn + '.npy')
+        fgeo = os.path.join(self.__dir, 'geodesic_matrices', fn + '.npy')
         g = np.load(fgeo) if os.path.exists(fgeo) else np.array([])
-        mesh = Mesh(v, f, g=g, k=self.cnf["num_eigenfunctions"], type=self.cnf["type"])
+        mesh = Mesh(v, f, g=g, k=self.__k, type=self.__type)
 
-        feig = os.path.join(self.dir, 'eigen', fn + '.npz')
+        feig = os.path.join(self.__dir, 'eigen', fn + '.npz')
         if os.path.exists(feig):
             eigen = np.load(feig)
             mesh.eigen = [eigen[key] for key in ["evals","evecs"]]
 
-        fsig = os.path.join(self.dir, 'signatures', fn + '.npy')
+        fsig = os.path.join(self.__dir, 'signatures', fn + '.npy')
         if os.path.exists(fsig):
             mesh.scalars['signatures'] = np.load(fsig)
 

@@ -41,11 +41,6 @@ pip install pre-commit black flake8 isort
 pre-commit install
 ```
 
-### List of tunebale parameters
-
-1. Input mesh size: target_size in preprocess.py. Default value is **???**.
-2. Number of WKS, HKS and Gaussian signature functions: num_wks, num_hks, and **???** in preprocess.py. Default values are **???**, **???**, and **???**, respectively.
-3. Dimension of the functional space: k in **??.py**. Default value is 100.
 
 ### How to cite
 

@@ -42,7 +42,8 @@ def product_manifold_kernel(gx, gy, ix, iy, sigma):
     return K / K.max()
 
 
-def product_manifold_filter_correspondence(assignment_functor, gx, gy, i, j, sigma = .13, gamma = 1, iterations = 1):
+def product_manifold_filter_correspondence(assignment_functor, gx, gy, i, j, config):
+    sigma, gamma, iterations = (config[key] for key in ["sigma", "gamma", "iterations"])
     for _ in range(iterations):
         P = product_manifold_kernel(gx, gy, i, j, sigma)
         i,j = assignment_functor(P)
@@ -50,9 +51,9 @@ def product_manifold_filter_correspondence(assignment_functor, gx, gy, i, j, sig
     return i,j
 
 
-def product_manifold_filter_assignment(assignment_functor, gx, gy, P, sigma = .13, gamma = 1, iterations = 1):
+def product_manifold_filter_assignment(assignment_functor, gx, gy, P, config):
     i,j = assignment_functor(P)
-    return product_manifold_filter_correspondence(assignment_functor, gx, gy, i, j, sigma, gamma, iterations)
+    return product_manifold_filter_correspondence(assignment_functor, gx, gy, i, j, config)
 
 ''' ======================================================================================================= '''
     ###                                           End                                                   ###

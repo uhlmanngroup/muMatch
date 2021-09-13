@@ -15,8 +15,6 @@ import geometric_utilities as util
 from scipy.optimize import linear_sum_assignment
 
 
-
-
 class fast_assigment_functor:
     def __init__(self, src, dst, N_sampling = 100):
         self.src = src
