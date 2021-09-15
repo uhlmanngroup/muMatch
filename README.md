@@ -41,6 +41,11 @@ pip install pre-commit black flake8 isort
 pre-commit install
 ```
 
+## Running the pipeline on example data
+
+With the mumatch environment activated: 
+```python run_pipeline.py
+```
 
 ### How to cite
 
