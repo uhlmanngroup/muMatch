@@ -31,6 +31,18 @@ data_dir = os.path.join(cur_dir, "example_data", "processed_data")
 batch_preprocess(raw_dir, data_dir, config["preprocessing"])
 
 """
+## Deep functional maps
+
+To improve the signature functions using deep functional maps, set the parameter "use_deep_learning" to True.
+
+"""
+
+use_deep_learning = True
+if use_deep_learning:
+    import preprocessing.deep_functional_maps.optimise_signatures as optimise_signatures
+    optimise_signatures.process_directory(data_dir=data_dir, config=config["preprocessing"], mesh_type="Teeth_dataset")
+
+"""
 ## Mesh correspondence
 
 Here we compute the actual correspondences between input meshes. A functor matching_functional is created and a match between a pair of meshes is computed by calling it with their respective filenames. There are two ways of doing this:

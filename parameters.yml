@@ -6,6 +6,10 @@ preprocessing:
     number_hks: 0
     number_wks: 100
     number_gaussian: 18
+    deep_functional_maps:
+        learning_rate: 0.001
+        batch_size: 1
+        epochs: 10
 
 correspondence:
     initial_solve_dimension: 8 # solve dimension prior to zoomout refinement
