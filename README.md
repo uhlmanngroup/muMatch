@@ -28,7 +28,32 @@ conda activate mumatch
 pip install --editable .
 ```
 
-### Optional: automatic house-keeping
+## Getting started
+
+We provide an example analysis pipeline that can be run by calling
+
+```bash
+python run_pipeline.py
+```
+
+This file will run all steps of the microMatch pipeline on the example data we provide in the `example_data` folder and can be used as a basis to use microMatch on your own data. It also illustrates some basic shape analysis outputs that can be retreived once correspondence has been established.
+
+We also provide a further example of visualization of the correspondence map in the jupyter notebook `scalar_plotting.ipynb`. Once `run_pipeline.py` has been run once, `scalar_plotting.ipynb` can be explored in your browser through the jupyter notebook interface by running
+
+```bash
+jupyter notebook
+```
+
+with the muMatch conda environment activated (see Installation above).
+
+
+## Troubleshooting
+
+- If you adapt `run_pipeline.py` directly to work on your own files, make sure that your file names do not include full stops, dashes or underscores (the shorter the name, the less risk of problems). 
+- It is possible to transfer data from Imaris (.wrl) to meshlab (conversion from .wrl to .stl) and use .stl in muMatch.
+
+
+## Optional: automatic house-keeping
 
 To maintain a good code base, you can setup [pre-commit hooks](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks) to:
  - format your code (using a code formatter like black)
@@ -42,7 +67,7 @@ pre-commit install
 ```
 
 
-### How to cite
+## How to cite
 
 If you use µMatch, please cite us as follows:
 

@@ -27,17 +27,21 @@ from preprocessing.preprocess import batch_preprocess
 
 raw_dir  = os.path.join(cur_dir, "example_data", "raw")
 data_dir = os.path.join(cur_dir, "example_data", "processed_data")
+if not os.path.exists(data_dir):
+    os.makedirs(data_dir)
 
 batch_preprocess(raw_dir, data_dir, config["preprocessing"])
 
 """
 ## Deep functional maps
 
+/!\ This step is optional and the pipeline can run successfully without it. 
 To improve the signature functions using deep functional maps, set the parameter "use_deep_learning" to True.
+To ignore this step, set the parameter "use_deep_learning" to False.
 
 """
 
-use_deep_learning = True
+use_deep_learning = True 
 if use_deep_learning:
     import preprocessing.deep_functional_maps.optimise_signatures as optimise_signatures
     optimise_signatures.process_directory(data_dir=data_dir, config=config["preprocessing"], mesh_type="Teeth_dataset")
@@ -52,8 +56,9 @@ Here we compute the actual correspondences between input meshes. A functor match
 """
 from correspondence.match import Match
 
-data_dir = os.path.join(cur_dir, "example_data", "processed_data")
 match_dir = os.path.join(cur_dir, "example_data", "match_results")
+if not os.path.exists(match_dir):
+    os.makedirs(match_dir)
 
 matching_functional = Match(dir_in=data_dir, dir_out=match_dir, config=config["correspondence"], display_result=False)
 matching_functional("Q02", "Q03")
