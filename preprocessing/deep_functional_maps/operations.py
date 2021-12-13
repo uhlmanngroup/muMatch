@@ -23,7 +23,7 @@ with warnings.catch_warnings():
 def solve_lstsq(A, B):
     At  =  tf.transpose(A, [0,2,1])
     Bt  =  tf.transpose(B, [0,2,1])
-    Ct  =  tf.linalg.lstsq(At,Bt, l2_regularizer=1e-3)
+    Ct  =  tf.linalg.lstsq(At,Bt, l2_regularizer=1e-2)
     C   =  tf.transpose(Ct, [0,2,1])
     return C
 
