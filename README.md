@@ -77,4 +77,4 @@ python run_pipeline.py
 
 If you use µMatch, please cite us as follows:
 
-> J. Klatzow, G. Dalmasso, N. Martinez-Abadias, J. Sharpe, and V. Uhlmann, "μMatch: 3D shape correspondence for microscopy data", Frontiers in Computer Science, 2021. https://doi.org/10.3389/fcomp.2022.777615
+> J. Klatzow, G. Dalmasso, N. Martinez-Abadias, J. Sharpe, and V. Uhlmann, "μMatch: 3D shape correspondence for microscopy data", Frontiers in Computer Science, 2022. https://doi.org/10.3389/fcomp.2022.777615
