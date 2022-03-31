@@ -19,11 +19,7 @@ with warnings.catch_warnings():
     warnings.filterwarnings("ignore",category=FutureWarning)
     import tensorflow as tf
 
-
-cur_dir = os.path.dirname(__file__)
-sys.path.insert(1, cur_dir)
-
-import operations as ops
+from . import operations as ops
 
 
 '''====================================================================================='''

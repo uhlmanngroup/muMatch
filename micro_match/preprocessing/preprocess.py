@@ -16,15 +16,12 @@ import pymeshfix
 
 from tqdm import tqdm
 
+from ..tools import geometric_utilities as util
+from . import feature_descriptors as fd
+from ..tools.mesh_class import Mesh, mesh_loader
+
 ## Local Imports ##
 cur_dir = os.path.dirname(__file__)
-sys.path.insert(1, cur_dir)
-sys.path.insert(1, os.path.join(cur_dir, "..", "tools"))
-
-import geometric_utilities as util
-import feature_descriptors as fd
-from   mesh_class import Mesh, mesh_loader
-
 
 def clean_mesh(mesh):
     v,f = mesh.points(), np.asarray(mesh.faces())

@@ -11,8 +11,6 @@ from scipy.sparse.csgraph import connected_components
 from scipy.sparse.linalg import eigsh, spsolve
 from scipy.spatial import Delaunay, KDTree
 
-sys.path.insert(1, os.path.join(os.path.dirname(__file__)))
-
 import multiprocessing as mp
 from typing import List
 

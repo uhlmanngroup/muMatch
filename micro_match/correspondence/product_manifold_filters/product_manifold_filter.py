@@ -5,13 +5,8 @@ import os
 ## Numerical Libraries ##
 import numpy as np
 
-## Local Imports ##
-cur_dir = os.path.dirname(__file__)
-sys.path.insert(1,os.path.join(cur_dir))
-sys.path.insert(1,os.path.join(cur_dir,'..','tools'))
-
-import geometric_utilities as util
-from mesh_class import Mesh
+from ...tools import geometric_utilities as util
+from ...tools.mesh_class import Mesh
 
 
 ''' ======================================================================================================= '''

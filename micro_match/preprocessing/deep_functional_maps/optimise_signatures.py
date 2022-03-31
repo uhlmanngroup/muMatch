@@ -14,10 +14,6 @@ with warnings.catch_warnings():
     warnings.filterwarnings("ignore",category=FutureWarning)
     import tensorflow as tf
 
-
-cur_dir = os.path.dirname(__file__)
-sys.path.insert(1, cur_dir)
-
 from data_loading import generate_TFRecord
 from training import ensembleTrainer
 from prediction import dfmPredictor

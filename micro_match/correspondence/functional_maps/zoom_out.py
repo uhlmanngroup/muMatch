@@ -5,13 +5,9 @@ import math
 # Numerical
 import numpy as np
 
-# Local Imports #
-cur_dir = os.path.dirname(__file__)
-sys.path.insert(1,os.path.join(cur_dir))
-sys.path.insert(1,os.path.join(cur_dir,'..', '..','tools'))
 
-import functional_mapping as fm
-import geometric_utilities as util
+from . import functional_mapping as fm
+from ...tools import geometric_utilities as util
 from scipy.optimize import linear_sum_assignment
 
 

@@ -14,18 +14,12 @@ from scipy.optimize import linear_sum_assignment
 import igl
 import vedo as vp
 
-# Local imports
-
-cur_dir = os.path.dirname(__file__)
-sys.path.insert(1, cur_dir)
-sys.path.insert(1, os.path.join(cur_dir, "..", "tools"))
-
 import functional_maps.zoom_out as zo
 import functional_maps.functional_mapping as fm
-import product_manifold_filters.product_manifold_filter as pmf
+from product_manifold_filters import product_manifold_filter as pmf
 
-import geometric_utilities as util
-from mesh_class import Mesh, mesh_loader
+from ..tools import geometric_utilities as util
+from ..tools.mesh_class import Mesh, mesh_loader
 
 
 def readJSON(fn):

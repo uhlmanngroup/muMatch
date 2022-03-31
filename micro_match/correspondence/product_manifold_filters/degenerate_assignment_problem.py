@@ -1,15 +1,5 @@
-## Standard Libraries ##
-import sys
-import os
-from typing import List
-
-## Numerical Libraries ##
 import numpy as np
 import math
-
-## Local Imports ##
-cur_dir = os.path.dirname(__file__)
-sys.path.insert(1,os.path.join(cur_dir,'..','..','tools'))
 
 from scipy.optimize import linear_sum_assignment
 

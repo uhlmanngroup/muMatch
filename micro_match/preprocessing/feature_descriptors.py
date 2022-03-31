@@ -6,11 +6,7 @@ import os
 import numpy as np
 import scipy as sp
 
-## Local Imports ##
-cur_dir = os.path.dirname(__file__)
-sys.path.insert(1,os.path.join(cur_dir,'..','tools'))
-
-import geometric_utilities as util
+from ..tools import geometric_utilities as util
 #from shot_descriptor import calculate_SHOT_descriptors
 
 ''' ======================================================================================================= '''

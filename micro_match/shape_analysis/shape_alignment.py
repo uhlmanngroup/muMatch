@@ -15,19 +15,15 @@ import matplotlib.pyplot as plt
 
 ## Memory 
 from joblib import Memory, Parallel, delayed
-# To have a cache for computations which are taking time to complete
-memory = Memory(location=".joblib_cache", verbose=0)
 
-## Local Imports ##
-cur_dir = os.path.dirname(__file__)
-sys.path.insert(1, os.path.join(cur_dir, "..", "tools"))
-
-import geometric_utilities as util
-from mesh_class import Mesh, mesh_loader
+from ..tools import geometric_utilities as util
+from ..tools.mesh_class import Mesh, mesh_loader
 
 from itertools import tee
 import networkx as nx
 
+# To have a cache for computations which are taking time to complete
+memory = Memory(location=".joblib_cache", verbose=0)
 ''' ======================================================================================================= '''
     #### ---------------------------------------------------------------------------------------------- ###
 ''' ======================================================================================================= '''
