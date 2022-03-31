@@ -1,27 +1,19 @@
 import math
-import os
-import sys
-
-import igl
-import vedo as vp
-import numpy as np
-from joblib import Memory, Parallel, delayed
-from scipy.sparse import csr_matrix, diags, lil_matrix
-from scipy.sparse.csgraph import connected_components
-from scipy.sparse.linalg import eigsh, spsolve
-from scipy.spatial import Delaunay, KDTree
-
-import multiprocessing as mp
 from typing import List
 
-from joblib import Parallel, delayed
+import igl
+import numpy as np
+import vedo as vp
+from joblib import Memory, Parallel, delayed
+from scipy.sparse import diags
+from scipy.sparse.linalg import eigsh, spsolve
 
 # To have a cache for computations which are taking time to complete
 memory = Memory(location=".joblib_cache", verbose=0)
 
 
 """ ================================================================================= """
-##################             Point Cloud Utilities           ##################
+"""                          Point Cloud Utilities                                    """
 """ ================================================================================= """
 
 
@@ -31,8 +23,8 @@ def readMesh(fn, normalise=False):
     f = np.asarray(mesh.faces())
     if normalise:
         v -= np.mean(v, axis=0)
-        v /= math.sqrt(area(v,f))
-    return v,f
+        v /= math.sqrt(area(v, f))
+    return v, f
 
 
 def differenceMatrix(array1, array2=None, norm=True):
@@ -83,7 +75,7 @@ def differenceMatrix(array1, array2=None, norm=True):
 
 
 """ ================================================================================= """
-##################             Alignment Operations            ##################
+"""                            Alignment Operations                                   """
 """ ================================================================================= """
 
 
@@ -103,7 +95,7 @@ def orthogonalProcrustes(X, Y):
 
 
 """ ================================================================================= """
-##################                Laplacian Ops                ##################
+"""                                    Laplacian Ops                                  """
 """ ================================================================================= """
 
 
@@ -136,7 +128,7 @@ def gaussianCurvature(v, f):
 
 def meanCurvature(v, f):
     print("this is using the wrong def of laplace_beltrami_operator")
-    assert(False)
+    assert False
     lb = laplace_beltrami_operator(v, f)
     hn = -lb.dot(v)
     h = np.linalg.norm(hn, axis=-1)
@@ -147,7 +139,7 @@ def meanCurvature(v, f):
 
 
 """ ================================================================================= """
-##################               Mesh Operations               ##################
+"""                               Mesh Operations                                     """
 """ ================================================================================= """
 
 
@@ -173,12 +165,13 @@ def vedo_decimate(v, f, N=None, frac=None):
 
 def vedo_subdivide(v, f, N=1, method=0):
     import vedo as vp
+
     vedo_mesh = vp.Mesh([v, f])
     vedo_mesh.subdivide(N=N, method=method)
-    u,f = vedo_mesh.points(), np.asarray(vedo_mesh.faces())
+    u, f = vedo_mesh.points(), np.asarray(vedo_mesh.faces())
     d = differenceMatrix(v, u)
     idx = d.argmin(axis=-1)
-    return u,f,idx
+    return u, f, idx
 
 
 def reorder_mesh(v, f, idx):
@@ -202,9 +195,9 @@ def extractEdges(faces):
     return edges[ind]
 
 
-def edge_lengths(v,f):
-    i,j = extractEdges(f).T
-    return np.linalg.norm(v[i]-v[j], axis=-1)
+def edge_lengths(v, f):
+    i, j = extractEdges(f).T
+    return np.linalg.norm(v[i] - v[j], axis=-1)
 
 
 def boundaryVertices(faces):
@@ -257,13 +250,14 @@ def geodesicMatrix(v, f, i1=np.array([]), i2=np.array([])):
 
 
 def area(v, f):
-    return face_areas(v,f).sum()
+    return face_areas(v, f).sum()
 
 
-def face_areas(v,f):
+def face_areas(v, f):
     a, b, c = f.T
     areas = 0.5 * np.cross(v[b] - v[a], v[c] - v[a])
     return np.linalg.norm(areas, axis=-1)
+
 
 def face_normals(v, f):
     a, b, c = f.T
@@ -273,7 +267,7 @@ def face_normals(v, f):
 
 
 """ ================================================================================= """
-##################               Propagation Ops               ##################
+"""                               Propagation Ops                                     """
 """ ================================================================================= """
 
 
@@ -325,7 +319,7 @@ def extrapolate_scalars(
 
 
 """ ================================================================================= """
-##################                   Misc                      ##################
+"""                                        Misc                                       """
 """ ================================================================================= """
 
 
@@ -353,7 +347,7 @@ def first_n(x, n, axis=0):
 
 
 """ ================================================================================= """
-##################              Path Operations                ##################
+"""                                 Path Operations                                   """
 """ ================================================================================= """
 
 
@@ -366,12 +360,3 @@ def arcLength(p):
         s.append(s[-1] + dl)
     s = np.array(s) / s[-1]
     return s[:-1]
-
-
-""" ================================================================================= """
-###################               End                       #####################
-""" ================================================================================= """
-
-
-if __name__ == "__main__":
-    pass

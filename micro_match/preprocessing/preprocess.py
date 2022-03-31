@@ -1,30 +1,16 @@
-## Standard Libraries ##
-import sys
 import os
-import json
 
-## Numerical Libraries ##
 import numpy as np
-import math
-
-## Mesh related ##
-import igl
-import vedo as vp
 import pymeshfix
-
-## Other ##
-
+import vedo as vp
 from tqdm import tqdm
 
-from ..tools import geometric_utilities as util
+from ..tools.mesh_class import mesh_loader
 from . import feature_descriptors as fd
-from ..tools.mesh_class import Mesh, mesh_loader
 
-## Local Imports ##
-cur_dir = os.path.dirname(__file__)
 
 def clean_mesh(mesh):
-    v,f = mesh.points(), np.asarray(mesh.faces())
+    v, f = mesh.points(), np.asarray(mesh.faces())
     meshfix = pymeshfix.MeshFix(v, f)
     meshfix.repair()
     return vp.Mesh([meshfix.v, meshfix.f])
@@ -33,7 +19,10 @@ def clean_mesh(mesh):
 def batch_preprocess(dir_in, dir_out, config):
 
     loader = mesh_loader(dir_out, k=config["functional_dimension"], type="")
-    dirs = {fn: os.path.join(dir_out, fn) for fn in ["meshes", "geodesic_matrices", "eigen", "signatures"]}
+    dirs = {
+        fn: os.path.join(dir_out, fn)
+        for fn in ["meshes", "geodesic_matrices", "eigen", "signatures"]
+    }
 
     for k in dirs:
         if not os.path.exists(dirs[k]):
@@ -41,9 +30,9 @@ def batch_preprocess(dir_in, dir_out, config):
 
     files = []
 
-    print("\n" + 60*"-")
+    print("\n" + 60 * "-")
     print("Resampling meshes")
-    print(60*"-" + "\n")
+    print(60 * "-" + "\n")
 
     raw_files = os.listdir(dir_in)
     # TODO: Should hidden files be excluded in general? I do not think any hidden files should be used.
@@ -52,7 +41,7 @@ def batch_preprocess(dir_in, dir_out, config):
 
     for f in tqdm(raw_files):
         fin = os.path.join(dir_in, f)
-        fn,_ = os.path.splitext(f)
+        fn, _ = os.path.splitext(f)
         fout = os.path.join(dirs["meshes"], fn + ".ply")
         files.append(fn)
         if os.path.exists(fout):
@@ -60,14 +49,14 @@ def batch_preprocess(dir_in, dir_out, config):
         mesh = vp.load(fin)
         if config["clean"]:
             mesh = clean_mesh(mesh)
-        while (mesh.N() < target_size):
+        while mesh.N() < target_size:
             mesh.subdivide(N=1, method=0)
         mesh.decimate(N=target_size)
         mesh.write(fout)
 
-    print("\n" + 60*"-")
+    print("\n" + 60 * "-")
     print("Calculating geodesic matrices")
-    print(60*"-" + "\n")
+    print(60 * "-" + "\n")
 
     for fn in tqdm(files):
         fgeo = os.path.join(dirs["geodesic_matrices"], fn + ".npy")
@@ -76,38 +65,41 @@ def batch_preprocess(dir_in, dir_out, config):
         try:
             mesh = loader(fn)
             np.save(fgeo, mesh.g)
-        except:
-            print('Geodesic matrix error with: {}'.format(fn))
+        except Exception:
+            print(f"Geodesic matrix error with: {fn}")
 
-    print("\n" + 60*"-")
+    print("\n" + 60 * "-")
     print("Calculating Laplacian eigendecomposition")
-    print(60*"-" + "\n")
+    print(60 * "-" + "\n")
 
-    sizes,minima,maxima = [[] for _ in range(3)]
+    sizes, minima, maxima = [[] for _ in range(3)]
 
     for fn in tqdm(files):
         feigen = os.path.join(dirs["eigen"], fn + ".npz")
         try:
             mesh = loader(fn)
-            evals,evecs = mesh.eigen
+            evals, evecs = mesh.eigen
             evecs_t = np.transpose(mesh.mass @ evecs)
-            sizes.append( mesh.N() )
-            minima.append( 1e-2 + evals[0 < evals].min() )
-            maxima.append( evals.max() )
+            sizes.append(mesh.N())
+            minima.append(1e-2 + evals[0 < evals].min())
+            maxima.append(evals.max())
             if not os.path.exists(feigen):
-                np.savez(feigen, evals = evals, evecs = evecs, evecs_t = evecs_t)
-        except:
-            print("Eigen-decomposition error with {}: skipping.".format(fn))
-
+                np.savez(feigen, evals=evals, evecs=evecs, evecs_t=evecs_t)
+        except Exception:
+            print(f"Eigen-decomposition error with {fn}: skipping.")
 
     emin = float(min(minima))
     emax = float(max(maxima))
-    num_hks, num_wks, num_gaussian = [config[key] for key in ["number_hks", "number_wks", "number_gaussian"]]
-    descriptor =  fd.descriptor_class(emin, emax, num_wks=num_wks, num_hks=num_hks, num_gaussian=num_gaussian)
+    num_hks, num_wks, num_gaussian = [
+        config[key] for key in ["number_hks", "number_wks", "number_gaussian"]
+    ]
+    descriptor = fd.DescriptorClass(
+        emin, emax, num_wks=num_wks, num_hks=num_hks, num_gaussian=num_gaussian
+    )
 
-    print("\n" + 60*"-")
+    print("\n" + 60 * "-")
     print("Calculating signature functions")
-    print(60*"-" + "\n")
+    print(60 * "-" + "\n")
 
     for fn in tqdm(files):
         fsigs = os.path.join(dirs["signatures"], fn + ".npy")
@@ -117,11 +109,8 @@ def batch_preprocess(dir_in, dir_out, config):
             mesh = loader(fn)
             signatures = descriptor(mesh)
             np.save(fsigs, signatures)
-        except:
-            print("Signature function error with {}: skipping.".format(fn))
+        except Exception:
+            print(f"Signature function error with {fn}: skipping.")
 
-    print("\n\n" + "Preprocessing complete." + "\n\n" )
+    print("\n\n" + "Preprocessing complete." + "\n\n")
     return
-
-if __name__ == "__main__":
-    pass
