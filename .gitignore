@@ -106,6 +106,7 @@ windows/
 **/.joblib_cache
 
 # Test data files
+example_data/processed_data/
 *.npy
 *.npz
 **/meshes/*.ply
