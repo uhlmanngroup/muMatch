@@ -121,10 +121,10 @@ def run_microMatch(
 
 
 def run_microMatch_test():
-    example_data_dir = os.path.join(os.getcwd(), "example_data")
+    example_data_dir = Path(__file__).resolve().parent.parent / "example_data"
 
     run_microMatch(
-        data_dir=example_data_dir,
+        data_dir=str(example_data_dir),
         mesh_correspondences=[("Q02", "Q03"), ("Q03", "Q04")],
         dataset_id="Teeth_dataset",
     )

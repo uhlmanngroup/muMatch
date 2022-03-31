@@ -85,8 +85,8 @@ def batch_preprocess(dir_in, dir_out, config):
             maxima.append(evals.max())
             if not os.path.exists(feigen):
                 np.savez(feigen, evals=evals, evecs=evecs, evecs_t=evecs_t)
-        except Exception:
-            print(f"Eigen-decomposition error with {fn}: skipping.")
+        except Exception as err:
+            print(f"{fn} Eigen-decomposition error : {err}")
 
     emin = float(min(minima))
     emax = float(max(maxima))
