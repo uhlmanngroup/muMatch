@@ -86,7 +86,8 @@ class Match:
         if not fout == -1:
             np.save(fout, np.stack([i,j],axis=0))
 
-        return
+        # Return geodesic distortion between the two objects
+        return dg
 
 
 if __name__ == '__main__':
