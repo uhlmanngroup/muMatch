@@ -30,13 +30,15 @@ pip install --editable .
 
 ## Getting started
 
-We provide an example analysis pipeline that can be run by calling
-
-```bash
-python run_pipeline.py
+Once the package has been installed the pipeline can be tested with:
+```python
+from micro_match.run_pipeline import run_microMatch_test
+run_microMatch_test()
 ```
 
-This file will run all steps of the microMatch pipeline on the example data we provide in the `example_data` folder and can be used as a basis to use microMatch on your own data. It also illustrates some basic shape analysis outputs that can be retreived once correspondence has been established.
+This analysis pipeline runs all steps of the microMatch pipeline on the example data we provide in the `example_data` folder and can be used as a basis to use microMatch on your own data. It also illustrates some basic shape analysis outputs that can be retreived once correspondence has been established.
+
+Feel free to adjust the pipeline for your needs in the "micro_match/run_pipeline.py" file.
 
 We also provide a further example of visualization of the correspondence map in the jupyter notebook `scalar_plotting.ipynb`. Once `run_pipeline.py` has been run once, `scalar_plotting.ipynb` can be explored in your browser through the jupyter notebook interface by running
 
@@ -64,13 +66,6 @@ To setup pre-commit setup, you can type when your environment is activated:
 ```bash
 pip install pre-commit black flake8 isort
 pre-commit install
-```
-
-## Running the pipeline on example data
-
-With the mumatch environment activated: 
-```bash
-python run_pipeline.py
 ```
 
 ## How to cite
