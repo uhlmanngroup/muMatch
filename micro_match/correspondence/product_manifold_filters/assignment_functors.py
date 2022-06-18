@@ -11,8 +11,8 @@ from ...tools import geometric_utilities as util
 class elastic_assignment_functor:
     def __init__(self, mesh, stretch):
         self.idx = mesh.decimate(frac=1 / stretch)[-1]
-        self.jdx = mesh.g[self.idx].argmin(axis=0)
-        self.g = mesh.g
+        self.jdx = mesh.geodesic_matrix[self.idx].argmin(axis=0)
+        self.g = mesh.geodesic_matrix
 
     def reduce_scalar(self, scalar):
         shape = [self.idx.size] + list(scalar.shape)[1:]

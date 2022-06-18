@@ -9,7 +9,7 @@ def loader(dir, fn):
     fgeo = os.path.join(dir, "geodesic_matrices", fn + ".npy")
     mesh = vp.load(fmsh)
     mesh.normalize()
-    centre = mesh.points(copy=True).mean(axis=0)
+    centre = mesh.points().copy().mean(axis=0)
     mesh.shift(*centre)
     dg = np.load(fgeo)
     return mesh, dg
@@ -29,7 +29,7 @@ class PartitionViewer(vp.plotter.Plotter):
         self.__fout = os.path.join(self.__dir, "partitions", fn + ".npy")
         self.__mesh = mesh
         self.add([self.__mesh])
-        self.__pts = mesh.points(copy=True)
+        self.__pts = mesh.vertices.copy()
         self.__g = g
         self.__left = []
         self.__right = []

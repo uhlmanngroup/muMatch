@@ -33,7 +33,10 @@ def root(x, n):
 
 
 def coupling_array(mesh, k, sigma):
-    x = np.exp(-0.5 * (mesh.g / mesh.g.mean() / sigma) ** 2)
+    x = np.exp(
+        -0.5
+        * (mesh.geodesic_matrix / mesh.geodesic_matrix.mean() / sigma) ** 2
+    )
     x = zero_diagonal(spectral_array(mesh, x, k=-1))
     J0 = x[:k][:, :k]
     J1 = x[:k][:, k:] @ x[k:][:, :k]

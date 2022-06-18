@@ -18,8 +18,8 @@ def getSHOTLocalRF(mesh, idx, neighbours, radius):
     N = neighbours.size
     if N < 3:
         raise Exception("Not enough points for computing SHOT descriptor")
-    dv = mesh.v[neighbours] - mesh.v[idx]
-    w = radius - mesh.g[idx, neighbours]
+    dv = mesh.vertices[neighbours] - mesh.vertices[idx]
+    w = radius - mesh.geodesic_matrix[idx, neighbours]
     M = np.einsum("ki,kj->kij", dv, dv) * w[:, np.newaxis, np.newaxis]
     M = M.sum(axis=0) / w.sum()
     evals, evecs = np.linalg.eigh(M)
@@ -32,7 +32,7 @@ def getSHOTLocalRF(mesh, idx, neighbours, radius):
 
 
 def neighbouringPoints(mesh, index, radius):
-    neighbours = np.argwhere(mesh.g[index] < radius).flatten()
+    neighbours = np.argwhere(mesh.geodesic_matrix[index] < radius).flatten()
     return np.setdiff1d(neighbours, [index])
 
 
@@ -65,10 +65,10 @@ def calculate_SHOT_descriptors(mesh, radius):
 
     def describe_vertex(feat_index):
 
-        centralPoint = mesh.v[feat_index]
+        centralPoint = mesh.vertices[feat_index]
         neighs = neighbouringPoints(mesh, feat_index, radius)
         ref_X, ref_Y, ref_Z = getSHOTLocalRF(mesh, feat_index, neighs, radius)
-        dv = mesh.v[neighs] - centralPoint
+        dv = mesh.vertices[neighs] - centralPoint
         normals = mesh.normals[neighs]
 
         xInFeatRef = np.sum(dv * ref_X, axis=-1)
@@ -89,6 +89,6 @@ def calculate_SHOT_descriptors(mesh, radius):
         histogram[c, a, r, e] += 1
         return filter_histogram(histogram).flatten()
 
-    N = mesh.N()
+    N = mesh.num_vertices()
     signatures = [describe_vertex(idx) for idx in range(N)]
     return np.stack(signatures, axis=0)

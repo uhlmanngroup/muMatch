@@ -64,7 +64,7 @@ def batch_preprocess(dir_in, dir_out, config):
             continue
         try:
             mesh = loader(fn)
-            np.save(fgeo, mesh.g)
+            np.save(fgeo, mesh.geodesic_matrix)
         except Exception:
             print(f"Geodesic matrix error with: {fn}")
 
@@ -80,7 +80,7 @@ def batch_preprocess(dir_in, dir_out, config):
             mesh = loader(fn)
             evals, evecs = mesh.eigen
             evecs_t = np.transpose(mesh.mass @ evecs)
-            sizes.append(mesh.N())
+            sizes.append(mesh.num_vertices())
             minima.append(1e-2 + evals[0 < evals].min())
             maxima.append(evals.max())
             if not os.path.exists(feigen):

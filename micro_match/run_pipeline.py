@@ -94,10 +94,13 @@ def run_microMatch(
         config=config["correspondence"],
         display_result=False,
     )
-
-    geodesic_distortions = pd.DataFrame(0, index=raw_files, columns=raw_files)
+    prev_files = list({corr[0] for corr in mesh_correspondences})
+    curr_files = list({corr[1] for corr in mesh_correspondences})
+    geodesic_distortions = pd.DataFrame(
+        0, index=prev_files, columns=curr_files
+    )
     for correspondence in mesh_correspondences:
-        mesh_a, mesh_b = sorted(correspondence)
+        mesh_a, mesh_b = correspondence
         geodesic_distortions.loc[mesh_a, mesh_b] = matching_functional(
             mesh_a, mesh_b
         )
@@ -118,6 +121,8 @@ def run_microMatch(
     deviations = collection_deviation(point_clouds, iterations=10)
     classes = raw_files
     clustering_analysis(classes, deviations, variant=dataset_id)
+
+    return geodesic_distortions
 
 
 def run_microMatch_test():
