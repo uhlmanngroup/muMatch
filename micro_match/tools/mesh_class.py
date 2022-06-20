@@ -387,7 +387,7 @@ class Mesh:
 
     def from_vedo(self, vedo_mesh):
         self.__v = vedo_mesh.points().copy()
-        self.__f = np.asarray(vedo_mesh.f())
+        self.__f = np.asarray(vedo_mesh.faces())
         return self
 
     def write(self, fn, method="vedo"):

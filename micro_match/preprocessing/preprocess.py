@@ -4,13 +4,14 @@ import numpy as np
 import pymeshfix
 import vedo as vp
 from tqdm import tqdm
+from vedo import Mesh as vMesh
 
 from ..tools.mesh_class import mesh_loader
 from . import feature_descriptors as fd
 
 
-def clean_mesh(mesh):
-    v, f = mesh.points(), np.asarray(mesh.f())
+def clean_mesh(vedo_mesh: vMesh):
+    v, f = vedo_mesh.vertices(), np.asarray(vedo_mesh.faces())
     meshfix = pymeshfix.MeshFix(v, f)
     meshfix.repair()
     return vp.Mesh([meshfix.v, meshfix.f])
