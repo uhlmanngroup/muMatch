@@ -423,8 +423,8 @@ class mesh_loader:
             np.load(fgeo) if os.path.exists(fgeo) else np.array([])
         )
         mesh = Mesh(
-            v,
-            f,
+            vertices=v,
+            faces=f,
             geodesic_matrix=geodesic_matrix,
             num_eigenvectors=self.__k,
             type=self.__type,

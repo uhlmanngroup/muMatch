@@ -105,8 +105,8 @@ class ensembleTrainer:
             for x, y in pairwise(self.dataset):
                 try:
                     self.train_step(x, y)
-                except Exception:
-                    print("Error caught.")
+                except Exception as e:
+                    print(f"Error caught: {e}")
             epoch_loss = self.loss.result()
             if epoch % print_interval == 0:
                 print("Epoch {}, Loss: {}".format(epoch + 1, 100 * epoch_loss))
