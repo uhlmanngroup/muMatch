@@ -38,8 +38,8 @@ def compute_correspondence(src, dst, config):
     assign = lambda x: linear_sum_assignment(x, maximize=True)
     i, j = pmf.product_manifold_filter_assignment(
         assign,
-        src.geodesic_matrix,
-        dst.geodesic_matrix,
+        src.g,
+        dst.g,
         P,
         config["product_manifold_filter"],
     )
@@ -73,14 +73,12 @@ class Match:
             if os.path.exists(fout)
             else compute_correspondence(src, dst, self.config)
         )
-        dg = np.abs(
-            src.geodesic_matrix[i][:, i] - dst.geodesic_matrix[j][:, j]
-        ).mean()
+        dg = np.abs(src.g[i][:, i] - dst.g[j][:, j]).mean()
 
         print(fn1 + " -> " + fn2 + f": geodesic distortion = {dg:.3f}")
 
         if self.display:
-            R = util.orthogonalProcrustes(src.vertices[i], dst.vertices[j])
+            R = util.orthogonalProcrustes(src.v[i], dst.v[j])
             dst.rotate(R)
             fig = vp.plotter.Plotter()
             fig.add([m.vedo() for m in (src, dst)])

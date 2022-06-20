@@ -20,7 +20,7 @@ memory = Memory(location=".joblib_cache", verbose=0)
 def readMesh(fn, normalise=False):
     mesh = vp.load(fn)
     v = mesh.points().copy().astype(np.double)
-    f = np.asarray(mesh.faces())
+    f = np.asarray(mesh.f())
     if normalise:
         v -= np.mean(v, axis=0)
         v /= math.sqrt(area(v, f))

@@ -29,7 +29,7 @@ class PartitionViewer(vp.plotter.Plotter):
         self.__fout = os.path.join(self.__dir, "partitions", fn + ".npy")
         self.__mesh = mesh
         self.add([self.__mesh])
-        self.__pts = mesh.vertices.copy()
+        self.__pts = mesh.v.copy()
         self.__g = g
         self.__left = []
         self.__right = []

@@ -24,12 +24,9 @@ def generate_sequence(xmin, xmax, nsamples, sequence_type="log_linear"):
 
 
 def gaussian_descriptor(mesh, num):
-    k = util.gaussianCurvature(mesh.vertices, mesh.faces)
+    k = util.gaussianCurvature(mesh.v, mesh.f)
     mus = [10.0 ** (-t) for t in np.linspace(1, 9, num=num, endpoint=True)]
-    ks = [
-        util.laplacianSmoothing(mesh.discrete_laplacian, mesh.mass, k, mu=mu)
-        for mu in mus
-    ]
+    ks = [util.laplacianSmoothing(mesh.l, mesh.mass, k, mu=mu) for mu in mus]
     return np.stack(ks, axis=-1)
 
 

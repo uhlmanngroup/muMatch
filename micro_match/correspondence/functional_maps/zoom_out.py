@@ -9,9 +9,9 @@ class fast_assigment_functor:
     def __init__(self, src, dst, N_sampling=100):
         self.src = src
         self.dst = dst
-        self.i_src = util.metric_sampling(src.geodesic_matrix, N_sampling)
-        self.i_dst = util.metric_sampling(dst.geodesic_matrix, N_sampling)
-        self.j_dst = dst.geodesic_matrix[self.i_dst].argmin(axis=0)
+        self.i_src = util.metric_sampling(src.g, N_sampling)
+        self.i_dst = util.metric_sampling(dst.g, N_sampling)
+        self.j_dst = dst.g[self.i_dst].argmin(axis=0)
 
     def reduce(self, scalar):
         shape = [self.i_dst.size] + list(scalar.shape)[1:]

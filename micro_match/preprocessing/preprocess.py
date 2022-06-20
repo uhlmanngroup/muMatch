@@ -10,7 +10,7 @@ from . import feature_descriptors as fd
 
 
 def clean_mesh(mesh):
-    v, f = mesh.points(), np.asarray(mesh.faces())
+    v, f = mesh.points(), np.asarray(mesh.f())
     meshfix = pymeshfix.MeshFix(v, f)
     meshfix.repair()
     return vp.Mesh([meshfix.v, meshfix.f])
@@ -64,7 +64,7 @@ def batch_preprocess(dir_in, dir_out, config):
             continue
         try:
             mesh = loader(fn)
-            np.save(fgeo, mesh.geodesic_matrix)
+            np.save(fgeo, mesh.g)
         except Exception:
             print(f"Geodesic matrix error with: {fn}")
 

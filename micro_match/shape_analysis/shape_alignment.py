@@ -55,7 +55,7 @@ def thin_plate_spline(x0, y0, x):
 
 def deformation_transform(src, dst, *args):
     cs, cd = [m.centroid() for m in (src, dst)]
-    R = util.orthogonalProcrustes(dst.vertices - cd, src.vertices - cs)
+    R = util.orthogonalProcrustes(dst.v - cd, src.v - cs)
     for x in args:
         x.shift(-cs).rotate(R).shift(cd)
     return
