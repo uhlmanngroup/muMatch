@@ -137,7 +137,7 @@ def process_directory(data_dir, match_dir, display=False):
         for a, b in pairwise(path):
             i, j = readResults(match_dir, names[a], names[b])
             deformation_transform(meshes[a][i], meshes[b][j], x)
-        aligned.append(x.vertices)
+        aligned.append(x.v)
 
     template_idx, point_clouds = icp_alignement(aligned, iterations=2)
 
@@ -147,7 +147,7 @@ def process_directory(data_dir, match_dir, display=False):
         scalar = meshes[template_idx].filter(deviation, k=-1)
 
         average = meshes[template_idx].copy()
-        average.vertices = v
+        average.v = v
         average.display(scalar=scalar)
 
     return names, point_clouds

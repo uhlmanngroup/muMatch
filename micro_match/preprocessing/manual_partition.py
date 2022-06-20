@@ -7,12 +7,12 @@ import vedo as vp
 def loader(dir, fn):
     fmsh = os.path.join(dir, "meshes", fn + ".ply")
     fgeo = os.path.join(dir, "geodesic_matrices", fn + ".npy")
-    mesh = vp.load(fmsh)
-    mesh.normalize()
-    centre = mesh.points().copy().mean(axis=0)
-    mesh.shift(*centre)
+    vedo_mesh = vp.load(fmsh)
+    vedo_mesh.normalize()
+    centre = vedo_mesh.points().copy().mean(axis=0)
+    vedo_mesh.shift(*centre)
     dg = np.load(fgeo)
-    return mesh, dg
+    return vedo_mesh, dg
 
 
 class PartitionViewer(vp.plotter.Plotter):
@@ -25,11 +25,11 @@ class PartitionViewer(vp.plotter.Plotter):
 
     def addMesh(self, fn):
         self.clear()
-        mesh, g = loader(self.__dir, fn)
+        vedo_mesh, g = loader(self.__dir, fn)
         self.__fout = os.path.join(self.__dir, "partitions", fn + ".npy")
-        self.__mesh = mesh
+        self.__mesh = vedo_mesh
         self.add([self.__mesh])
-        self.__pts = mesh.vertices.copy()
+        self.__pts = vedo_mesh.points.copy()
         self.__g = g
         self.__left = []
         self.__right = []

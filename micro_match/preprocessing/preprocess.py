@@ -11,7 +11,7 @@ from . import feature_descriptors as fd
 
 
 def clean_mesh(vedo_mesh: vMesh):
-    v, f = vedo_mesh.vertices(), np.asarray(vedo_mesh.faces())
+    v, f = vedo_mesh.points(), np.asarray(vedo_mesh.faces())
     meshfix = pymeshfix.MeshFix(v, f)
     meshfix.repair()
     return vp.Mesh([meshfix.v, meshfix.f])
