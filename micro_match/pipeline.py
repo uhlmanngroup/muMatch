@@ -183,7 +183,6 @@ def run_micromatch_test():
     -------
         None
     """
-    print("Test")
     example_data_dir = Path(__file__).resolve().parent.parent / "example_data"
 
     run_microMatch(
