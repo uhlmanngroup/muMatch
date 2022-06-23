@@ -20,7 +20,7 @@ def mesh_correspondence(
     match_dir: str,
     mesh_pairs: List[Tuple[str, str]],
     correspondence_config: Dict,
-):
+) -> pd.DataFrame:
     """
     Here we compute the actual correspondences between input meshes. A functor matching_functional is created and a match between a pair of meshes is computed by calling it with their respective filenames. There are two ways of doing this:
     * A minimal way is to identify a template mesh and compute the correspondences between this and all other meshes (this is what is done in the code block below).
