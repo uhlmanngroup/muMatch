@@ -153,9 +153,13 @@ def run_microMatch(
     # To improve the signature functions using deep functional maps, set the parameter "use_deep_learning" to True.
     # To ignore this step, set the parameter "use_deep_learning" to False.
     if use_deep_learning:
+        checkpoint_dir = os.path.join(data_dir, "checkpoints")
+        if not os.path.exists(checkpoint_dir):
+            os.makedirs(checkpoint_dir)
         os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
         optimise_signatures.process_directory(
             data_dir=data_dir,
+            checkpoint_dir=checkpoint_dir,
             config=config["preprocessing"],
             mesh_type=dataset_id,
         )

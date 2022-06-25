@@ -35,12 +35,7 @@ def stripFileType(s):
 
 
 def generate_TFRecord(dir_in, N, output_name):
-    cur_dir = os.path.dirname(
-        __file__
-    )  # TODO: Data needs to be stored outside of python package.
-    tfrecords_filename = os.path.join(
-        cur_dir, "data", f"{output_name}.tfrecords"
-    )
+    tfrecords_filename = os.path.join(dir_in, f"{output_name}.tfrecords")
     writer = tf.io.TFRecordWriter(tfrecords_filename)
     names = [
         os.path.splitext(f)[0]

@@ -36,7 +36,6 @@ def batch_preprocess(dir_in, dir_out, config):
     print(60 * "-" + "\n")
 
     raw_files = os.listdir(dir_in)
-    # TODO: Should hidden files be excluded in general? I do not think any hidden files should be used.
     raw_files = [file for file in raw_files if ".DS_Store" not in file]
     target_size = config["number_vertices"]
 

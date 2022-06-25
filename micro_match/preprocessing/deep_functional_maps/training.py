@@ -98,7 +98,7 @@ class ensembleTrainer:
             )
         self.loss(loss)
 
-    def train(self, number_epochs, chkpt_name):
+    def train(self, number_epochs, checkpoint_dir, chkpt_name):
         best = -1
         print_interval = int(number_epochs / 10)
         for epoch in range(number_epochs):
@@ -117,9 +117,6 @@ class ensembleTrainer:
             if epoch == 1:
                 best = epoch_loss
             elif epoch_loss < best:
-                cur_dir = os.path.dirname(
-                    __file__
-                )  # TODO: Data needs to be stored outside of python package.
-                fout = os.path.join(cur_dir, "checkpoints", chkpt_name)
+                fout = os.path.join(checkpoint_dir, chkpt_name)
                 self.func.save_weights(fout)
                 best = epoch_loss
