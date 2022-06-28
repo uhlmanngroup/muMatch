@@ -89,6 +89,6 @@ def calculate_SHOT_descriptors(mesh, radius):
         histogram[c, a, r, e] += 1
         return filter_histogram(histogram).flatten()
 
-    N = mesh.N()
+    N = mesh.num_vertices()
     signatures = [describe_vertex(idx) for idx in range(N)]
     return np.stack(signatures, axis=0)

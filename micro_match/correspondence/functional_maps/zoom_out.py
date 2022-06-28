@@ -32,7 +32,7 @@ class zoomout_refinement:
     def __init__(self, src, dst):
         self.src = src
         self.dst = dst
-        self.kmax = np.array([src.k, dst.k])
+        self.kmax = np.array([src.num_eigenvectors, dst.num_eigenvectors])
         self.assignment = fast_assigment_functor(src, dst)
 
     def iteration(self, C, dk):

@@ -19,7 +19,7 @@ memory = Memory(location=".joblib_cache", verbose=0)
 
 def readMesh(fn, normalise=False):
     mesh = vp.load(fn)
-    v = mesh.points(copy=True).astype(np.double)
+    v = mesh.points().copy().astype(np.double)
     f = np.asarray(mesh.faces())
     if normalise:
         v -= np.mean(v, axis=0)

@@ -31,7 +31,7 @@ if __name__ == "__main__":
     base_name_m2 = os.path.basename(args.m2)
 
     plt = vp.Plotter(
-        shape=(1, 2), size="full", title=f"{base_name_m1} vs. {base_name_m2}"
+        shape=[1, 2], size="full", title=f"{base_name_m1} vs. {base_name_m2}"
     )
     print("Press [Space] to continue")
     plt.show(m1, at=0)

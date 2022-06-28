@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib import cm
 from sklearn.decomposition import PCA
 
 from ..tools import geometric_utilities as util
@@ -33,7 +34,7 @@ def collection_deviation(point_clouds, iterations=15):
 def clustering_analysis(classes, deviations, variant):
     classes = np.asarray(classes)
     unique = np.unique(classes)
-    cmap = ["g", "r", "b", "p", "c", "k", "o"]  # fix
+    cmap = cm.get_cmap("Set1")
 
     dp = deviations.reshape(deviations.shape[0], -1)
     pca = PCA(n_components=2, svd_solver="full")
@@ -41,7 +42,7 @@ def clustering_analysis(classes, deviations, variant):
 
     fig, ax = plt.subplots()
 
-    for c, var in zip(cmap, unique):
+    for c, var in zip(cmap.colors, unique):
         x, y = S[classes == var].T
         ax.scatter(x, y, c=c, s=250)
 

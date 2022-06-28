@@ -7,7 +7,7 @@ from .prediction import dfmPredictor
 from .training import ensembleTrainer
 
 
-def process_directory(data_dir, config, mesh_type):
+def process_directory(data_dir, checkpoint_dir, config, mesh_type):
 
     # Parameter extraction
     num_signatures = sum(
@@ -26,14 +26,11 @@ def process_directory(data_dir, config, mesh_type):
     generate_TFRecord(data_dir, num_vertices, mesh_type)
 
     # Training
-    cur_dir = os.path.dirname(
-        __file__
-    )  # TODO: Data needs to be stored outside of python package.
-    fin = os.path.join(cur_dir, "data", f"{mesh_type}.tfrecords")
+    fin = os.path.join(data_dir, f"{mesh_type}.tfrecords")
     trainer = ensembleTrainer(
         tf_record_file=fin, num_sigs=num_signatures, lr=lr, bs=bs
     )
-    trainer.train(number_epochs, mesh_type)
+    trainer.train(number_epochs, checkpoint_dir, mesh_type)
 
     # Optimise signature functions
     predictor = dfmPredictor(mesh_type, num_signatures)

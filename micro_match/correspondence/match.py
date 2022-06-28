@@ -37,7 +37,11 @@ def compute_correspondence(src, dst, config):
     P = fm.soft_correspondence(src, dst, C)
     assign = lambda x: linear_sum_assignment(x, maximize=True)
     i, j = pmf.product_manifold_filter_assignment(
-        assign, src.g, dst.g, P, config["product_manifold_filter"]
+        assign,
+        src.g,
+        dst.g,
+        P,
+        config["product_manifold_filter"],
     )
     return i, j
 
@@ -55,7 +59,7 @@ class Match:
         dst = self.loader(f2, normalise=True)
 
         fn1, fn2 = f1, f2
-        if dst.N() < src.N():
+        if dst.num_vertices() < src.num_vertices():
             fn1, fn2 = f2, f1
             src, dst = dst, src
 
