@@ -73,3 +73,7 @@ pre-commit install
 If you use µMatch, please cite us as follows:
 
 > J. Klatzow, G. Dalmasso, N. Martinez-Abadias, J. Sharpe, and V. Uhlmann, "μMatch: 3D shape correspondence for microscopy data", Frontiers in Computer Science, 2022. https://doi.org/10.3389/fcomp.2022.777615
+
+## Contributing
+
+Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
