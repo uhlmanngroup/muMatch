@@ -13,13 +13,20 @@ from . import geometric_utilities as util
 
 class Mesh:
     def __init__(
-        self, v=np.array([]), f=np.array([]), g=np.array([]), k=100, type=""
+        self,
+        v=np.array([]),  # Vertices
+        f=np.array([]),  # Faces
+        g=np.array([]),  # Geodesic Matrix
+        num_eigenvectors=100,  # Number of Eigenvectors and values
+        type="",
     ):
-        self.__v = v
-        self.__f = f
-        self.__g = g
-        self.__k = k
-        self.__l = np.array([])
+        self.__v = v  # Vertices
+        self.__f = f  # Faces
+        self.__g = g  # Geodesic Matrix
+        self.__num_eigenvectors = (
+            num_eigenvectors  # Number of Eigenvectors and values
+        )
+        self.__l = np.array([])  # Laplacian
         self.__mass = np.array([])
         self.__normals = np.array([])
         self.__eigen = [np.array([]) for _ in range(2)]
@@ -34,14 +41,20 @@ class Mesh:
         return self
 
     def __getitem__(self, idx):
-        if idx.size == self.N():
+        if idx.size == self.num_vertices():
             v, f = util.reorder_mesh(self.v, self.f, idx)
         else:
             v = self.v[idx]
             f = np.array([])
 
         g = np.array([]) if (self.__g.size == 0) else self.g[idx][:, idx]
-        res = Mesh(v, f, g=g, k=self.k, type=self.type)
+        res = Mesh(
+            v,
+            f,
+            g=g,
+            num_eigenvectors=self.num_eigenvectors,
+            type=self.type,
+        )
         for fn in self.scalars:
             try:
                 res.scalars[fn] = self.scalars[fn][idx].copy()
@@ -55,7 +68,7 @@ class Mesh:
             v=self.__v.copy(),
             f=self.__f.copy(),
             g=self.__g.copy(),
-            k=self.__k,
+            num_eigenvectors=self.__num_eigenvectors,
             type=self.__type,
         )
         res.mass = self.__mass.copy()
@@ -73,25 +86,35 @@ class Mesh:
     def area(self):
         return util.area(self.v, self.f)
 
-    def N(self):
+    def num_vertices(self):
+        """
+        Returns the number of vertices of a mesh.
+
+        Returns
+        -------
+            Number of vertices of mesh
+        """
         return self.__v.shape[0]
 
     """ ================================================ """
     """                 Getters and Setters              """
     """ ================================================ """
-
+    # Vertices
     @property
     def v(self):
         return self.__v
 
+    # Vertices
     @v.setter
     def v(self, v):
         self.__v = v
 
+    # Faces
     @property
     def f(self):
         return self.__f
 
+    # Faces
     @f.setter
     def f(self, f):
         self.__f = f
@@ -117,18 +140,19 @@ class Mesh:
         self.__scalars = scalars
 
     @property
-    def k(self):
-        return self.__k
+    def num_eigenvectors(self):
+        return self.__num_eigenvectors
 
-    @k.setter
-    def k(self, k):
+    @num_eigenvectors.setter
+    def num_eigenvectors(self, k):
         self.__eigen = (
             [e[..., :k] for e in self.__eigen]
-            if (k <= self.__k)
+            if (k <= self.__num_eigenvectors)
             else [np.array([]) for _ in range(2)]
         )
-        self.__k = k
+        self.__num_eigenvectors = k
 
+    # Geodesic Matrix
     @property
     def g(self):
         if self.__g.size == 0:
@@ -140,9 +164,10 @@ class Mesh:
             #    self.__g = util.extrapolate_geodesic_matrix(v, self.v, g_sparse, f)
         return self.__g
 
+    # Geodesic Matrix
     @g.setter
-    def g(self, g):
-        self.__g = g
+    def g(self, geodesicmatrix):
+        self.__g = geodesicmatrix
 
     @property
     def gaussian(self):
@@ -170,13 +195,13 @@ class Mesh:
     def eigen(self):
         if any([e.size == 0 for e in self.__eigen]):
             self.__eigen = util.laplace_eigen_decomposition(
-                self.l, self.mass, self.k
+                self.l, self.mass, self.num_eigenvectors
             )
         return self.__eigen
 
     @eigen.setter
     def eigen(self, eigen):
-        self.__k = eigen[0].size
+        self.__num_eigenvectors = eigen[0].size
         self.__eigen = eigen
 
     @property
@@ -191,15 +216,17 @@ class Mesh:
     def mass(self, mass):
         self.__mass = mass
 
+    # Laplacian
     @property
     def l(self):
         if self.__l.size == 0:
             self.__l = igl.cotmatrix(self.v, self.f)
         return self.__l
 
+    # Laplacian
     @l.setter
-    def l(self, l):
-        self.__l = l
+    def l(self, laplacian):
+        self.__l = laplacian
 
     """ ================================================ """
     """                Scalar Conversion                 """
@@ -225,7 +252,7 @@ class Mesh:
         return self.filter(array.T, k=k).T
 
     def dirac_deltas(self, i, k=-1):
-        x = np.zeros((self.N(), i.size))
+        x = np.zeros((self.num_vertices(), i.size))
         j = np.arange(i.size)
         x[i, j] = 1
         return self.pointwise_2_vector(x, k)
@@ -239,12 +266,18 @@ class Mesh:
         _, v, f, _, idx = util.vedo_decimate(
             v, f, N=N, frac=frac
         )  # igl.decimate(self.v, self.f, target)
-        g = (
+        geodesic_matrix = (
             np.array([])
             if (self.__g.size == 0)
             else self.g[idx][:, idx].copy()
         )
-        res = Mesh(v, f, g=g, k=self.k, type=self.type)
+        res = Mesh(
+            v,
+            f,
+            g=geodesic_matrix,
+            num_eigenvectors=self.num_eigenvectors,
+            type=self.type,
+        )
         for fn in self.scalars:
             res.scalars[fn] = self.scalars[fn][idx].copy()
         return res, idx
@@ -254,8 +287,16 @@ class Mesh:
         idx: np.ndarray
         while v.shape[0] < target:
             v, f, idx = util.vedo_subdivide(v, f)
-        g = util.extrapolate_geodesic_matrix(self.v, v, self.g, self.f)
-        res = Mesh(v, f, g=g, k=self.k, type=self.type)
+        geodesic_matrix = util.extrapolate_geodesic_matrix(
+            self.v, v, self.g, self.f
+        )
+        res = Mesh(
+            v,
+            f,
+            g=geodesic_matrix,
+            num_eigenvectors=self.num_eigenvectors,
+            type=self.type,
+        )
         return res.decimate(N=target)[0]
 
     """ ================================================ """
@@ -345,7 +386,7 @@ class Mesh:
         return vp.Mesh([self.v, self.f], c=c)
 
     def from_vedo(self, vedo_mesh):
-        self.__v = vedo_mesh.points(copy=True)
+        self.__v = vedo_mesh.points().copy()
         self.__f = np.asarray(vedo_mesh.faces())
         return self
 
@@ -381,8 +422,16 @@ class mesh_loader:
         fmsh = os.path.join(self.__dir, "meshes", fn + ".ply")
         v, f = util.readMesh(fmsh, normalise=False)
         fgeo = os.path.join(self.__dir, "geodesic_matrices", fn + ".npy")
-        g = np.load(fgeo) if os.path.exists(fgeo) else np.array([])
-        mesh = Mesh(v, f, g=g, k=self.__k, type=self.__type)
+        geodesic_matrix = (
+            np.load(fgeo) if os.path.exists(fgeo) else np.array([])
+        )
+        mesh = Mesh(
+            v=v,
+            f=f,
+            g=geodesic_matrix,
+            num_eigenvectors=self.__k,
+            type=self.__type,
+        )
 
         feig = os.path.join(self.__dir, "eigen", fn + ".npz")
         if os.path.exists(feig):

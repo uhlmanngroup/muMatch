@@ -119,10 +119,10 @@ def build_graph_from_directory(dir_in):
 
 def process_directory(data_dir, match_dir, display=False):
     loader = mesh_loader(data_dir)
-    names, G = build_graph_from_directory(match_dir)
-    connected = list(max(nx.connected_components(G), key=len))
+    names, graph = build_graph_from_directory(match_dir)
+    connected = list(max(nx.connected_components(graph), key=len))
 
-    graph_centrality = nx.degree_centrality(G)
+    graph_centrality = nx.degree_centrality(graph)
     connected_centrality = [graph_centrality[n] for n in connected]
     target_idx = max(
         range(len(connected_centrality)), key=connected_centrality.__getitem__
@@ -132,7 +132,7 @@ def process_directory(data_dir, match_dir, display=False):
     aligned = []
 
     for source_idx in connected:
-        path = nx.shortest_path(G, source=source_idx, target=target_idx)
+        path = nx.shortest_path(graph, source=source_idx, target=target_idx)
         x = meshes[source_idx].copy()
         for a, b in pairwise(path):
             i, j = readResults(match_dir, names[a], names[b])

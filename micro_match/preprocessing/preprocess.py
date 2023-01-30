@@ -4,13 +4,14 @@ import numpy as np
 import pymeshfix
 import vedo as vp
 from tqdm import tqdm
+from vedo import Mesh as vMesh
 
 from ..tools.mesh_class import mesh_loader
 from . import feature_descriptors as fd
 
 
-def clean_mesh(mesh):
-    v, f = mesh.points(), np.asarray(mesh.faces())
+def clean_mesh(vedo_mesh: vMesh):
+    v, f = vedo_mesh.points(), np.asarray(vedo_mesh.faces())
     meshfix = pymeshfix.MeshFix(v, f)
     meshfix.repair()
     return vp.Mesh([meshfix.v, meshfix.f])
@@ -35,7 +36,6 @@ def batch_preprocess(dir_in, dir_out, config):
     print(60 * "-" + "\n")
 
     raw_files = os.listdir(dir_in)
-    # TODO: Should hidden files be excluded in general? I do not think any hidden files should be used.
     raw_files = [file for file in raw_files if ".DS_Store" not in file]
     target_size = config["number_vertices"]
 
@@ -80,7 +80,7 @@ def batch_preprocess(dir_in, dir_out, config):
             mesh = loader(fn)
             evals, evecs = mesh.eigen
             evecs_t = np.transpose(mesh.mass @ evecs)
-            sizes.append(mesh.N())
+            sizes.append(mesh.num_vertices())
             minima.append(1e-2 + evals[0 < evals].min())
             maxima.append(evals.max())
             if not os.path.exists(feigen):

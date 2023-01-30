@@ -31,9 +31,11 @@ pip install --editable .
 ## Getting started
 
 Once the package has been installed the pipeline can be tested with:
+
 ```python
-from micro_match.run_pipeline import run_microMatch_test
-run_microMatch_test()
+from micro_match.pipeline import run_micromatch_test
+
+run_micromatch_test()
 ```
 
 This analysis pipeline runs all steps of the microMatch pipeline on the example data we provide in the `example_data` folder and can be used as a basis to use microMatch on your own data. It also illustrates some basic shape analysis outputs that can be retreived once correspondence has been established.
